@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import '../../../core/class/sqldb.dart';
 import '../../../core/class/status_request.dart';
 import '../../../core/functions/handling_datacontroller.dart';
@@ -8,21 +7,25 @@ import '../../../linkapi.dart';
 import '../../../model/data/datasource/remote/cart_data.dart';
 import '../../../model/data/products_model.dart';
 
-class CartController extends GetxController {
+class CartController extends ChangeNotifier {
+  SqlDb sqlDb;
+  CartData cartData;
+  MyServices myServices;
+  CartController(
+      {required this.cartData, required this.sqlDb, required this.myServices}) {
+    getUserProductsCart();
+  }
   bool isLoading = false;
-  SqlDb sqlDb = Get.find();
   int currectCategory = 0;
   StatusRequest statusRequest = StatusRequest.none;
-  MyServices myServices = Get.find();
   List<Map> cart = [];
   List products = [];
   List<Map<String, dynamic>> productsCart = [];
   Map productsAndCounts = {};
   // List<CartModel> cart = [];
-  CartData cartData = CartData(Get.find());
   getUserProductsCart() async {
     statusRequest = StatusRequest.loading;
-    update();
+    notifyListeners();
     cart = await sqlDb.readData('select * from cart');
     print(
         "==============================cart============================$cart");
@@ -33,7 +36,7 @@ class CartController extends GetxController {
     }
     // statusRequest = StatusRequest.none;
 
-    update();
+    notifyListeners();
   }
 
   // getUserCart() async {
@@ -58,28 +61,28 @@ class CartController extends GetxController {
   // }
   increaseProductCartCount(String id, int quantity, int index) async {
     statusRequest = StatusRequest.loading;
-    update();
+    notifyListeners();
 
     int response = await sqlDb.updateData(
         "update cart set quantity='${quantity + 1}' where productid=$id");
     print(
         "================================Response===========================$response");
     if (response > 0) {
-      Get.snackbar("Success", "Increased One");
+      // Get.snackbar("Success", "Increased One");
       productsCart[index]['count'] =
           (int.parse(productsCart[index]['count']) + 1).toString();
       // getData();
     } else {
-      Get.defaultDialog(
-          title: "Warning", content: const Text("Something Went Wrong"));
+      // Get.defaultDialog(
+      //     title: "Warning", content: const Text("Something Went Wrong"));
     }
     statusRequest = StatusRequest.none;
-    update();
+    notifyListeners();
   }
 
   decreaseOrRemoveProductCartCount(String id, int quantity, int index) async {
     statusRequest = StatusRequest.loading;
-    update();
+    notifyListeners();
     if (quantity == 1) {
       int response =
           await sqlDb.deleteData("delete from cart where productid=$id");
@@ -92,17 +95,17 @@ class CartController extends GetxController {
       print(
           "================================Response===========================$response");
       if (response > 0) {
-        Get.snackbar("Success", "Decreased One");
+        // Get.snackbar("Success", "Decreased One");
         productsCart[index]['count'] =
             (int.parse(productsCart[index]['count']) - 1).toString();
         // getData();
       } else {
-        Get.defaultDialog(
-            title: "Warning", content: const Text("Something Went Wrong"));
+        // Get.defaultDialog(
+        //     title: "Warning", content: const Text("Something Went Wrong"));
       }
     }
     statusRequest = StatusRequest.none;
-    update();
+    notifyListeners();
   }
 
   getProductsCart(String productId, int quantity) async {
@@ -121,17 +124,10 @@ class CartController extends GetxController {
       print("========================product==============$productsCart");
       if (productsCart.length == cart.length) {
         statusRequest = StatusRequest.none;
-        update();
+        notifyListeners();
       }
     }
     // isLoading = false;
     // update();
-  }
-
-  @override
-  void onInit() {
-    getUserProductsCart();
-    // TODO: implement onInit
-    super.onInit();
   }
 }

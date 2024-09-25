@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
+import 'package:provider/provider.dart';
+// import 'package:get/get.dart';
 import 'package:readmore/readmore.dart';
 import 'package:task_1/core/shared/custom_button.dart';
+import 'package:task_1/view/home/controller/homescreen_controller.dart';
 import 'package:task_1/view/productdetails/controller/productdetails_controller.dart';
 import '../../../core/constant/app_colors.dart';
 import '../../../core/shared/custom_text.dart';
 
-class CustomProductDetails extends GetView<ProductDetailsController> {
+class CustomProductDetails extends StatelessWidget {
   final String productName;
   final String productId;
   final String productPrice;
@@ -25,9 +27,11 @@ class CustomProductDetails extends GetView<ProductDetailsController> {
 
   @override
   Widget build(BuildContext context) {
+    HomeScreenController controller =
+        Provider.of<HomeScreenController>(context, listen: false);
     return Container(
       padding: EdgeInsets.symmetric(vertical: 20.h, horizontal: 20.w),
-      width: Get.width,
+      width: MediaQuery.of(context).size.width,
       decoration: const BoxDecoration(
           color: AppColors.secondColor,
           borderRadius: BorderRadius.only(
@@ -84,12 +88,12 @@ class CustomProductDetails extends GetView<ProductDetailsController> {
               ],
             ),
           ),
-          controller.homeScreenController.userProductsIdCart.contains(productId)
+          controller.userProductsIdCart.contains(productId)
               ? Container()
               : CustomButton(
                   text: "Add to Cart",
                   isActive: true,
-                  minWidth: Get.width,
+                  minWidth: MediaQuery.of(context).size.width,
                   onPressed: onPressedAddToCart,
                 )
         ],

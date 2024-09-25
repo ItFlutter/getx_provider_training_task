@@ -1,25 +1,18 @@
-import 'package:get/get.dart';
+import 'package:flutter/material.dart';
 import 'package:task_1/view/home/controller/homescreen_controller.dart';
 import '../../../core/class/status_request.dart';
 import '../../../model/data/products_model.dart';
 
-class ProductDetailsController extends GetxController {
-  late ProductsModel productModel;
+class ProductDetailsController extends ChangeNotifier {
+  final ProductsModel productModel;
+  ProductDetailsController({required this.productModel});
   StatusRequest statusRequest = StatusRequest.none;
   // SqlDb sqlDb = Get.find();
-  HomeScreenController homeScreenController = Get.find();
-  addToCart(String productId) async {
+  addToCart(String productId, HomeScreenController homeScreenController) async {
     statusRequest = StatusRequest.loading;
-    update();
+    // notifyListeners();
     await homeScreenController.addToCart(productId);
     statusRequest = StatusRequest.none;
-    update();
-  }
-
-  @override
-  void onInit() {
-    productModel = Get.arguments['productModel'];
-    // TODO: implement onInit
-    super.onInit();
+    // notifyListeners();
   }
 }

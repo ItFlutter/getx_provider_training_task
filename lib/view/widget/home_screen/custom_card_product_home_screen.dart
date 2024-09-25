@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
+import 'package:provider/provider.dart';
 import 'package:task_1/core/constant/size.dart';
 import 'package:task_1/core/shared/custom_button_cart.dart';
 import 'package:task_1/view/home/controller/homescreen_controller.dart';
 import '../../../core/constant/app_colors.dart';
 import '../../../core/shared/custom_text.dart';
 
-class CustomCardProductHomeScreen extends GetView<HomeScreenController> {
+class CustomCardProductHomeScreen extends StatelessWidget {
   final String productName;
   final String productId;
   final double rating;
@@ -77,25 +77,29 @@ class CustomCardProductHomeScreen extends GetView<HomeScreenController> {
                 // width: 100.w,
                 fit: BoxFit.contain,
               ),
-              Row(
-                children: [
-                  CustomText(
-                      text: "$productPrice\$",
-                      color: AppColors.white,
-                      fontSize: 16.sp),
-                  const Spacer(),
-                  controller.userProductsIdCart.contains(productId)
-                      ? Container()
-                      : CustomButtonCart(
-                          color: AppColors.btnColor,
-                          icon: Icons.add,
-                          size: MySize.iconSizeMd,
-                          onTap: () {
-                            controller.addToCart(productId);
-                          },
-                        )
-                ],
-              ),
+              Consumer<HomeScreenController>(
+                builder: (context, controller, child) {
+                  return Row(
+                    children: [
+                      CustomText(
+                          text: "$productPrice\$",
+                          color: AppColors.white,
+                          fontSize: 16.sp),
+                      const Spacer(),
+                      controller.userProductsIdCart.contains(productId)
+                          ? Container()
+                          : CustomButtonCart(
+                              color: AppColors.btnColor,
+                              icon: Icons.add,
+                              size: MySize.iconSizeMd,
+                              onTap: () {
+                                controller.addToCart(productId);
+                              },
+                            )
+                    ],
+                  );
+                },
+              )
             ],
           ),
         ),

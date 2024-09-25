@@ -1,13 +1,12 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
+import 'package:provider/provider.dart';
+import 'package:task_1/core/class/crud.dart';
 import 'package:task_1/core/class/handling_dataview.dart';
 import 'package:task_1/core/class/sqldb.dart';
-import 'package:task_1/core/class/status_request.dart';
-import 'package:task_1/core/functions/remove_image_background.dart';
+import 'package:task_1/core/services/services.dart';
 import 'package:task_1/core/shared/custom_text.dart';
+import 'package:task_1/model/data/datasource/remote/home_data.dart';
 import 'package:task_1/view/home/controller/homescreen_controller.dart';
 import 'package:task_1/view/widget/home_screen/custom_banner_home_screen.dart';
 import 'package:task_1/core/shared/custom_button.dart';
@@ -21,9 +20,8 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Get.put(HomeController());
-    return GetBuilder<HomeScreenController>(
-      init: HomeScreenController(),
-      builder: (controller) {
+    return Consumer<HomeScreenController>(
+      builder: (context, controller, child) {
         return HandlingDataView(
             onRefresh: () async {
               await controller.onRefresh();
@@ -47,7 +45,7 @@ class HomeScreen extends StatelessWidget {
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 20.w),
                   child: CustomTextFormFieldSearch(
-                    controller: controller.search,
+                    // controller: controller.search,
                     fillColor: AppColors.secondColor,
                     hintText: "Search Product",
                     onChanged: (String currentInput) {
@@ -104,7 +102,8 @@ class HomeScreen extends StatelessWidget {
                                       child: InkWell(
                                         onTap: () {
                                           controller.goToPageProductDetails(
-                                              controller.products[index]);
+                                              controller.products[index],
+                                              context);
                                         },
                                         child: CustomCardProductHomeScreen(
                                             productId: controller
